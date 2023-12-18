@@ -1,40 +1,28 @@
-from aiogram.types import Message
+import sys
+import os
+from pprint import pprint
+
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup,CallbackQuery
 from aiogram.filters import Command
-
-from aiogram import Router
+from aiogram import Router, F
 rt = Router()
-#why can't i import this if it is located in states.py? impossible import from submodule to submodule?!
+from states.states import editing_schedule
 
-class Schedule():
-    editing: bool = False
-    creating: bool = False
-    d = {'Понедельник':[], 'Вторник':[],'Среда':[],'Четверг':[],'Пятница':[],'Суббота':[],'Воскресенье':[]}
-#and this???
-def getlist_frommsg(text):
-    text.replace(' ','').replace(',','').replace('.','')
-    list = text.split(sep='\n')
-    return list
+from keyboards.keyboards import call_schedule_keyboard
+@rt.message(F.text.lower().in_(["расписание","сегодня", "завтра"]))
+async def call_schedule_command(msg: Message):
+    editing_schedule=True
+    await msg.answer(text='*here will be schedule on today or tomorrow*',
+                     reply_markup=call_schedule_keyboard)
 
+@rt.callback_query(F.data=='edit_schedule')
+async def edit_schedule_command(clb: CallbackQuery):
+    await clb.message.answer('callback successfully handled')
+
+class Schedule:
+    week_schedule={}
 
 schedule = Schedule()
-i_to_day = {0: "Понедельник", 
-                 1: "Вторник",
-                 2: "Среда",
-                 3: "Четверг",
-                 4: "Пятница",
-                 5: "Суббота",
-                 6: "Воскресенье"}
-
-@rt.message(Command(commands='newlesson_schedule'))
-async def lesson_newschedule_command(msg: Message):
-    await msg.answer(text='Начнем с понедельника. Присылай мне предметы на понедельник по порядку, обязательно каждый с новой строки')
-    schedule.creating=True
-    for i in range(7):
-        await msg.answer(text=f'{i_to_day[i]}. Присылай уроки, обязательно каждый с новой строки')
-        lesson_newschedule_process(msg, getlist_frommsg(msg.text),i)
-
-@rt.message()
-async def lesson_newschedule_process(msg: Message, lessonlist,dayi):
-    if schedule.creating:
-        schedule[i_to_day[dayi]] = lessonlist
-        await msg.answer(f'Расписание на {i_to_day[dayi].lower()} успешно заполнен. Теперь {i_to_day[dayi+1].lower()}.')
