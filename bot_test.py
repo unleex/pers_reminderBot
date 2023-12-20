@@ -18,6 +18,12 @@ rt = Router()
 dp = Dispatcher()
 #change dp to rt
 #include router
+@dp.message()
+async def test(msg: Message):
+    handle()
+    
+async def handle(msg: Message):
+    await msg.answer('success')
 
 
 
