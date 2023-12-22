@@ -11,23 +11,13 @@ print(os.getenv('ADMIN_ID'))
 
 import asyncio
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram import Router, F,Dispatcher,Bot
 from keyboards.set_menu import set_main_menu
 rt = Router()
 dp = Dispatcher()
 #change dp to rt
 #include router
-@dp.message()
-async def test(msg: Message):
-    handle()
-    
-async def handle(msg: Message):
-    await msg.answer('success')
-
-
-
-
 
 async def main() -> None:
     bot = Bot(token=bot_token,

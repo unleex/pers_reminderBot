@@ -10,24 +10,27 @@ from aiogram.filters import Command
 from aiogram import Router, F
 rt = Router()
 from states.states import editing_schedule
-from keyboards.keyboards import call_schedule_keyboard, edit_schedule_keyboard
-from services.services import statecheck
-
+from keyboards.keyboards import call_schedule_keyboard, edit_schedule_keyboard, view_schedule_keyboard,view_day_keyboard
+from services.services import statecheck, format_list
+#schedule
+#   call schedule
 class Schedule:
     week_schedule={}
     new_schedule={}
     clb: CallbackQuery
 schedule = Schedule()
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
+editdays = [f'edit{i}' for i in days]
+viewdays = [f'view{i}' for i in days]
 
-
+#main
 @rt.message(Command(commands='schedule'))
 async def call_schedule_command(msg: Message):
-    global editing_schedule
-    editing_schedule=True
     await msg.answer(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)
+    
 
+#   edit schedule
 @rt.callback_query(F.data=='edit_schedule')
 async def edit_schedule_command(clb: CallbackQuery):
     await clb.message.edit_text(text=('Измени или создай расписание'
@@ -38,22 +41,78 @@ async def edit_schedule_command(clb: CallbackQuery):
                                 '3. Когда закончишь, не забудь нажать ✅'
                                 'Создать'),reply_markup=edit_schedule_keyboard)
 
-@rt.callback_query(F.data.in_(days))
+
+#       edit day
+@rt.callback_query(F.data.in_(editdays))
 async def edit_day_command(clb: CallbackQuery):
+    global editing_schedule
+    editing_schedule=True
     await clb.message.edit_text(text='Присылай уроки, <b>каждый–с новой строки,'
                                 'без номеров и других доп. символов</b>',
                                 reply_markup=None)
     schedule.clb = clb
 
+
+
 @statecheck
 @rt.message()
-async def add_day_process(msg: Message,activate=editing_schedule):
-    schedule.new_schedule.update({schedule.clb.data: msg.text.split('\n')})
-    output: str=''
-    j = 1
-    for i in schedule.new_schedule[schedule.clb.data]:
-        output += f'{j}. {i.capitalize()}\n'
-        j += 1
+async def edit_day_process(msg: Message,activate=editing_schedule):
+    schedule.new_schedule.update({schedule.clb.data[4:]: msg.text.split('\n')})
+    output = format_list(schedule.new_schedule[schedule.clb.data[4:]])
     await schedule.clb.message.edit_text(
-        text=(f'{schedule.clb.data}: расписание изменено!\n{output}'),#make this edit the schedule msg
+        text=(f'{schedule.clb.data[4:]}: расписание изменено!\n{output}'),
         reply_markup=edit_schedule_keyboard)#replace to adding a tick to inline button in editing schedule
+    await msg.delete()
+    
+
+@rt.callback_query(F.data=='confirm_edit_schedule')
+async def edit_schedule_confirm(clb: CallbackQuery):
+    global editing_schedule
+    editing_schedule = False
+    schedule.week_schedule = schedule.new_schedule
+    await clb.message.edit_text(
+        text='Расписание заполнено!',
+        reply_markup=call_schedule_keyboard
+    )
+
+@rt.callback_query(F.data=='cancel_edit_schedule')
+async def edit_schedule_cancel(clb: CallbackQuery):
+    global editing_schedule
+    editing_schedule = False
+    schedule.new_schedule.clear()
+    await clb.message.edit_text(
+        text='Изменения отменены.',
+        reply_markup=call_schedule_keyboard
+    )
+                               
+
+#   view schedule
+@rt.callback_query(F.data=='view_schedule')
+async def view_schedule_command(clb: CallbackQuery):
+    await clb.message.edit_text(text=("Выбери день, расписание которого "
+                                      "хочешь посмотреть."),
+                                      reply_markup=view_schedule_keyboard
+                                      )
+
+
+#       view day
+@rt.callback_query(F.data.in_(viewdays))
+async def view_day_command(clb: CallbackQuery):
+    day = clb.data[4:]
+    output = format_list(schedule.week_schedule[day])
+    await clb.message.edit_text(text=output,
+                                reply_markup=view_day_keyboard)
+    
+
+@rt.callback_query(F.data=='return_to_viewdays')
+async def return_to_viewdays(clb: CallbackQuery):
+    await clb.message.edit_text(text=("Выбери день, расписание которого "
+                                      "хочешь посмотреть."),
+                                      reply_markup=view_schedule_keyboard
+                                      )
+
+#back to menu
+@rt.callback_query(F.data=='return_to_menu')
+async def return_to_menu(clb: CallbackQuery):
+    await clb.message.edit_text(text='*here will be schedule on today or tomorrow*',
+                     reply_markup=call_schedule_keyboard)
