@@ -11,14 +11,19 @@ from aiogram import Router, F
 rt = Router()
 from states.states import editing_schedule
 from keyboards.keyboards import call_schedule_keyboard, edit_schedule_keyboard
+from services.services import statecheck
 
-
+class Schedule:
+    week_schedule={}
+    new_schedule={}
+    clb: CallbackQuery
+schedule = Schedule()
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
-new_day = {}
-new_schedule = {}
+
 
 @rt.message(Command(commands='schedule'))
 async def call_schedule_command(msg: Message):
+    global editing_schedule
     editing_schedule=True
     await msg.answer(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)
@@ -40,9 +45,9 @@ async def edit_day_command(clb: CallbackQuery):
                                 reply_markup=None)
     schedule.clb = clb
 
-
+@statecheck
 @rt.message()
-async def add_day_process(msg: Message):
+async def add_day_process(msg: Message,activate=editing_schedule):
     schedule.new_schedule.update({schedule.clb.data: msg.text.split('\n')})
     output: str=''
     j = 1
@@ -52,8 +57,3 @@ async def add_day_process(msg: Message):
     await schedule.clb.message.edit_text(
         text=(f'{schedule.clb.data}: расписание изменено!\n{output}'),#make this edit the schedule msg
         reply_markup=edit_schedule_keyboard)#replace to adding a tick to inline button in editing schedule
-class Schedule:
-    week_schedule={}
-    new_schedule={}
-    clb: CallbackQuery
-schedule = Schedule()
