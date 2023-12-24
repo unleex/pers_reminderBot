@@ -5,7 +5,7 @@ butt_edit_schedule = InlineKeyboardButton(
     callback_data='edit_schedule'
 )
 butt_edit_tasks = InlineKeyboardButton(
-    text='Изменить домашние задания', 
+    text='Домашние задания', 
     callback_data='edit_tasks'
 )
 butt_view_schedule = InlineKeyboardButton(
@@ -29,7 +29,7 @@ fri = InlineKeyboardButton(text=days[4],callback_data=editdays[4])
 sat = InlineKeyboardButton(text=days[5],callback_data=editdays[5])
 sun = InlineKeyboardButton(text=days[6],callback_data=editdays[6])
 confirm = InlineKeyboardButton(text='✅Создать',callback_data='confirm_edit_schedule')
-cancel = InlineKeyboardButton(text=' ❌Отмена',callback_data='cancel_edit_schedule')
+cancel = InlineKeyboardButton(text='❌Отмена',callback_data='cancel_edit_schedule')
 edit_schedule_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[mon],
                      [tue],
@@ -67,5 +67,12 @@ view_day_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(
         text='⬅️В дни',
         callback_data='return_to_viewdays'
+    )]]
+)
+#cancel day editing
+cancel_edit_day_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(
+        text='❌Отмена',
+        callback_data='cancel_edit_day'
     )]]
 )

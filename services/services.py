@@ -2,7 +2,7 @@ def getlist_frommsg(text):
     list = text.split(sep='\n')
     return list
 
-def format_list(a)->str:
+def format_list(a: list)->str:
     output: str=''
     j = 1
     for i in a:
@@ -18,3 +18,4 @@ def statecheck(func):
         else:
             return None
     return wrapper
+
