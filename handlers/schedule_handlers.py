@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery
 from aiogram import Router, F
 rt = Router()
 from states.states import editing_schedule
-from keyboards.keyboards import call_schedule_keyboard, edit_schedule_keyboard, view_schedule_keyboard,view_day_keyboard
+from keyboards.schedule_days_keyboards import call_schedule_keyboard, editdays_kb_builder,viewdays_kb_builder
 from services.services import format_list
 from lexicon.lexicon import LEXICON_RU
 from states.states import schedule
@@ -20,7 +20,7 @@ viewdays = [f'view{i}' for i in days]
 @rt.callback_query(F.data=='edit_schedule')
 async def edit_schedule_command(clb: CallbackQuery):
     await clb.message.edit_text(text=(LEXICON_RU['edit_schedule_text']),
-                                reply_markup=edit_schedule_keyboard)
+                                reply_markup=editdays_kb_builder.as_markup(resize_keyboard=True))
 
 
 #           confirm schedule editing
@@ -49,7 +49,7 @@ async def edit_schedule_cancel(clb: CallbackQuery):
 async def view_schedule_command(clb: CallbackQuery):
     await clb.message.edit_text(text=("Выбери день, расписание которого "
                                       "хочешь посмотреть."),
-                                      reply_markup=view_schedule_keyboard
+                                      reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True)
                                       )
 
 
@@ -59,5 +59,5 @@ async def view_day_command(clb: CallbackQuery):
     day = clb.data[4:]
     output = format_list(schedule.week_schedule[day])
     await clb.message.edit_text(text=output,
-                                reply_markup=view_day_keyboard)
+                                reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True))
     

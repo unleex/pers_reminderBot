@@ -10,7 +10,7 @@ from aiogram.filters import Command
 from aiogram import Router, F
 rt = Router()
 from states.states import editing_schedule
-from keyboards.keyboards import call_schedule_keyboard, edit_schedule_keyboard, view_schedule_keyboard,view_day_keyboard,cancel_edit_day_keyboard
+from keyboards.schedule_days_keyboards import editdays_kb_builder, viewdays_kb_builder,view_day_keyboard,cancel_edit_day_keyboard
 from services.services import statecheck, format_list
 from lexicon.lexicon import LEXICON_RU
 from states.states import schedule
@@ -37,7 +37,7 @@ async def edit_day_process(msg: Message,activate=editing_schedule):
     output = format_list(schedule.new_schedule[schedule.clb.data[4:]])
     await schedule.clb.message.edit_text(
         text=(f'{schedule.clb.data[4:]}: расписание изменено!\n{output}'),
-        reply_markup=edit_schedule_keyboard)#replace to adding a tick to inline button in editing schedule
+        reply_markup=editdays_kb_builder.as_markup(resize_keyboard=True))#replace to adding a tick to inline button in editing schedule
     editing_schedule=False
     await msg.delete()
 
@@ -47,4 +47,4 @@ async def edit_day_process(msg: Message,activate=editing_schedule):
 async def cancel_edit_day(clb: CallbackQuery):
     global editing_schedule
     await clb.message.edit_text(text='Изменения отменены.',
-                                reply_markup=edit_schedule_keyboard)
+                                reply_markup=editdays_kb_builder)

@@ -2,7 +2,7 @@ from aiogram.types import Message,ReplyKeyboardMarkup,KeyboardButton,ReplyKeyboa
 from aiogram.filters import Command, CommandStart
 from lexicon.lexicon import LEXICON_RU
 from aiogram import Router, F
-from keyboards.keyboards import view_schedule_keyboard, call_schedule_keyboard
+from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
 rt = Router()
 @rt.message(CommandStart())
 async def info_start_command(message: Message):
@@ -17,7 +17,7 @@ async def info_help_command(message: Message):
 async def return_to_viewdays(clb: CallbackQuery):
     await clb.message.edit_text(text=("Выбери день, расписание которого "
                                       "хочешь посмотреть."),
-                                      reply_markup=view_schedule_keyboard
+                                      reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True)
                                       )
 
 #back to menu
