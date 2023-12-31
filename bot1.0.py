@@ -11,10 +11,11 @@ from handlers import schedule_handlers, edit_days_handlers, service_handlers, ta
 ####
 
 import asyncio
-from aiogram import Bot, Dispatcher
+from aiogram import Bot
 from create_dp import dp
-from aiogram.types import BotCommand
 from keyboards.set_menu import set_main_menu
+from aiogram.fsm.storage.redis import RedisStorage, Redis
+from aiogram.fsm.storage.memory import MemoryStorage
 
 async def main() -> None:
     bot = Bot(token=bot_token,
@@ -26,6 +27,8 @@ async def main() -> None:
     await set_main_menu(bot)
     await bot.delete_webhook(drop_pending_updates=1)
     await dp.start_polling(bot)
+    redis = Redis(host='localhost')
+    storage = RedisStorage(redis=redis)
 if __name__ == '__main__':
     asyncio.run(main())
 

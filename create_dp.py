@@ -1,3 +1,3 @@
 from aiogram import Dispatcher
-
-dp = Dispatcher()
+from states.states import storage
+dp = Dispatcher(storage=storage)

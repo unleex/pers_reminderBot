@@ -10,12 +10,3 @@ def format_list(a: list)->str:
         j += 1
     return output
 
-def statecheck(func):
-    def wrapper(*args, **kwargs):
-        if kwargs.get('activate'):
-            result = func(*args, **kwargs)
-            return result
-        else:
-            return None
-    return wrapper
-

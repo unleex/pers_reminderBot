@@ -1,4 +1,4 @@
-from aiogram.types import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import BotCommand
 from aiogram import Bot
 async def set_main_menu(bot: Bot) -> None:
     main_menu_commands=[
