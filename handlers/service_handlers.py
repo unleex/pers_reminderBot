@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 from aiogram.types import Message,CallbackQuery
 from aiogram.filters import Command, CommandStart,StateFilter
 from aiogram.fsm.context import FSMContext
@@ -7,10 +10,10 @@ from aiogram import Router, F
 from states.states import FSMStates
 from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
 rt = Router()
-@rt.message(CommandStart(), StateFilter(default_state))
-async def info_start_command(message: Message):
+@rt.message(CommandStart())
+async def info_start_command(message: Message,state:FSMContext):
     await message.answer(text=LEXICON_RU['start_command_text'])
-
+    await state.clear()
 @rt.message(Command(commands='help'),StateFilter(default_state))
 async def info_help_command(message: Message):
     await message.answer(text=LEXICON_RU['info_command_text'])
@@ -24,13 +27,14 @@ async def return_to_viewdays(clb: CallbackQuery):
                                       )
 
 #back to menu
-@rt.callback_query(F.data=='return_to_menu',StateFilter(default_state))
+@rt.callback_query(F.data=='return_to_menu')#,~StateFilter(default_state))
 async def return_to_menu(clb: CallbackQuery,state: FSMContext):
     await clb.message.edit_text(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)
     await state.clear()
 #main
 @rt.message(Command(commands='schedule'),StateFilter(default_state))
-async def call_schedule_command(msg: Message):
+async def call_schedule_command(msg: Message,state: FSMContext):
     await msg.answer(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)
+    state.clear()
