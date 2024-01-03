@@ -43,7 +43,6 @@ async def add_task_command(msg: Message,state: FSMContext):
     out += f'{subject}:'
     out += f'{task}\n'
     out += day_out
-    print(outlist, 'PRE HW')
     new_homework.subject_task=outlist[0]
     new_homework.due = outlist[1]
     await msg.answer(out,reply_markup=adding_task_kb)
@@ -52,20 +51,14 @@ async def add_task_command(msg: Message,state: FSMContext):
 @rt.callback_query(F.data == 'confirm_add_task',StateFilter(FSMStates.adding_task))
 async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
     schedule.tasks.append(new_homework)
-    print(new_homework.subject_task,new_homework.due,'NEW HW')
     new_homework.subject_task={}
     new_homework.due={}
-    print([i.subject_task for i in schedule.tasks], 'ADDED HW')
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
-    attrs = []
-    for task in schedule.tasks:
-        attrs.append([task.subject_task, task.due])
-    print(attrs)
 
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
 async def cancel_add_task(clb: CallbackQuery,state:FSMContext):
     new_homework.subject_task={}
     new_homework.due=''
-    await clb.message.edit_text('Изменения отменены')
+    await clb.message.edit_text('Изменения отменены.')
     await state.clear()
