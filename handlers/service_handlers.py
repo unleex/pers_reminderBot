@@ -8,8 +8,9 @@ from states.states import FSMStates
 from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
 rt = Router()
 @rt.message(CommandStart(), StateFilter(default_state))
-async def info_start_command(message: Message):
+async def info_start_command(message: Message,state: FSMContext):
     await message.answer(text=LEXICON_RU['start_command_text'])
+    await state.clear()
 
 @rt.message(Command(commands='help'),StateFilter(default_state))
 async def info_help_command(message: Message):

@@ -12,7 +12,7 @@ from aiogram.fsm.context import FSMContext
 from keyboards.schedule_days_keyboards import call_schedule_keyboard, editdays_kb_builder,viewdays_kb_builder
 from services.services import format_list
 from lexicon.lexicon import LEXICON_RU
-from states.states import schedule
+from my_typing.typing import schedule
 
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
 editdays = [f'edit{i}' for i in days]

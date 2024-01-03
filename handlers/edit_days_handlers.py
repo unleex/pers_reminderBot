@@ -9,10 +9,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 rt = Router()
-from states.states import FSMStates,schedule
+from states.states import FSMStates
 from keyboards.schedule_days_keyboards import editdays_kb_builder,cancel_edit_day_keyboard
 from services.services import format_list
 from lexicon.lexicon import LEXICON_RU
+from my_typing.typing import schedule
 
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
 editdays = [f'edit{i}' for i in days]

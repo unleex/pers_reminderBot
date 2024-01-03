@@ -15,8 +15,6 @@ from aiogram import Bot
 from create_dp import dp
 from keyboards.set_menu import set_main_menu
 from aiogram.fsm.storage.redis import RedisStorage, Redis
-from aiogram.fsm.storage.memory import MemoryStorage
-
 async def main() -> None:
     bot = Bot(token=bot_token,
               parse_mode='HTML')
@@ -31,4 +29,3 @@ async def main() -> None:
     storage = RedisStorage(redis=redis)
 if __name__ == '__main__':
     asyncio.run(main())
-

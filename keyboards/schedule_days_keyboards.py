@@ -47,7 +47,7 @@ view_day_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(
         text='⬅️В дни',
         callback_data='return_to_viewdays'
-    )]]
+    )]],resize_keyboard=True
 )
 
 
