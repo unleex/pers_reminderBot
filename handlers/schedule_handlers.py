@@ -41,7 +41,7 @@ async def edit_schedule_confirm(clb: CallbackQuery,state: FSMContext):
 @rt.callback_query(F.data=='cancel_edit_schedule',StateFilter(FSMStates.editing_schedule))
 async def edit_schedule_cancel(clb: CallbackQuery, state: FSMContext):
     schedule.new_schedule.clear()
-    await clb.message.edit_text(
+    await clb.message.edift_text(
         text='Изменения отменены.',
         reply_markup=call_schedule_keyboard
     )

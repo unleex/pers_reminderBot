@@ -29,20 +29,22 @@ def format_list(a: list)->str:
         output += f'{j}. {i.capitalize()}\n'
         j += 1
     return output
+def _format_text(subject_task: dict) -> str:
+   subject = list(subject_task.keys())[0]
+   task = list(subject_task.values())[0]
+   return f'{subject}: {task}'
 
 def gen_tasks_inline_kb(tasks: list[Homework]) -> list[InlineKeyboardButton]:
     butts: list[InlineKeyboardButton]
-    butts=[]#target 
-    for task in tasks:#gets list of hw
+    butts=[]
+    for task in tasks:
       butt = InlineKeyboardButton(
-         text=list(task.subject_task.items())[0],#gets subject_task
-         callback_data= TasksCallbackFactory(
+         text=_format_text(task.subject_task),
+         callback_data = TasksCallbackFactory(
             subject = list(task.subject_task.keys())[0],
             task = list(task.subject_task.values())[0],
-            due = task.due,
-            prefix='tasks'
-         ).pack()#<tasks:subject:task:due
+            due = task.due
+         ).pack()
          )
-      butts += butt
+      butts.append(butt)
     return butts
-   

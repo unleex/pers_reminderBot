@@ -4,17 +4,17 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message,InlineKeyboardButton,InlineKeyboardMarkup
 from lexicon.lexicon import LEXICON_RU
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
-from keyboards.tasks_keyboards import homework_kb_builder
+from keyboards.tasks_keyboards import homework_kb_builder,homework_service_butts
 from states.states import FSMStates
-from services.services import getdict_frommsg
-from my_typing.typing import new_homework,schedule
+from services.services import getdict_frommsg,gen_tasks_inline_kb
+from my_typing.typing import new_homework,schedule,Homework
 from keyboards.tasks_keyboards import adding_task_kb
 rt = Router()
 
@@ -27,10 +27,13 @@ viewdays = [f'view{i}' for i in days]
 #tasks
 @rt.callback_query(F.data=='edit_tasks',StateFilter(default_state))
 async def tasks_menu(clb: CallbackQuery,state: FSMContext):
+    homework_kb_builder.row(*gen_tasks_inline_kb(schedule.tasks),width=1)
+    homework_kb_builder.row(*homework_service_butts,width=1)
     await clb.message.answer(text=LEXICON_RU['edit_tasks_text'],
                              reply_markup=homework_kb_builder.as_markup(resize_keyboard=True))
     await state.set_state(FSMStates.editing_tasks)
 
+#add task
 @rt.message(StateFilter(default_state,FSMStates.editing_tasks))
 async def add_task_command(msg: Message,state: FSMContext):
     out = 'Подтвердите ввод:\n'
@@ -48,17 +51,50 @@ async def add_task_command(msg: Message,state: FSMContext):
     await msg.answer(out,reply_markup=adding_task_kb)
     await state.set_state(FSMStates.adding_task)
 
+#confirm adding task
 @rt.callback_query(F.data == 'confirm_add_task',StateFilter(FSMStates.adding_task))
 async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
-    schedule.tasks.append(new_homework)
+    schedule.tasks.append(Homework(subject_task=new_homework.subject_task,
+                                   due = new_homework.due))
     new_homework.subject_task={}
     new_homework.due={}
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
 
+#cancel adding task
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
 async def cancel_add_task(clb: CallbackQuery,state:FSMContext):
     new_homework.subject_task={}
     new_homework.due=''
     await clb.message.edit_text('Изменения отменены.')
     await state.clear()
+
+#view task
+@rt.callback_query(F.data.startswith('tasks:'),StateFilter(FSMStates.editing_tasks))
+async def view_task_command(clb: CallbackQuery, state : FSMContext):
+    complete = InlineKeyboardButton(
+        text='✅Выполнено',
+        callback_data='complete:'+clb.data
+    )
+    to_menu = InlineKeyboardButton(
+        text='⬅️В задания',
+        callback_data='to_tasks')
+    inlkb = InlineKeyboardMarkup(
+        inline_keyboard=[[complete],
+                         [to_menu]],
+        resize_keyboard=True
+    )
+    await clb.message.edit_text(text=clb.data[6:clb.data.rfind(':')],
+                                reply_markup=inlkb)
+    await state.set_state(FSMStates.viewing_task)
+
+#complete task
+@rt.callback_query(F.data.startswith('complete:'),
+                   StateFilter(FSMStates.viewing_task, FSMStates.editing_tasks)
+)
+async def complete_task(clb: CallbackQuery):
+    completed = clb.data[15:]
+    completed = {completed[:completed.rfind(':')]:
+                 completed[completed.rfind(':')+1:]}
+
+    await clb.message.answer(str(completed))

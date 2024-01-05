@@ -1,0 +1,4 @@
+dump.rdb
+__pycache__/
+*.py[cod]
+bin/
