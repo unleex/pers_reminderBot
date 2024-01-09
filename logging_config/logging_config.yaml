@@ -1,0 +1,53 @@
+version: 1
+disable_existing_loggers: True
+
+formatters:
+  default:
+    format: '[%(asctime)s] #%(levelname)-8s %(filename)s:%(lineno)d - %(name)s:%(funcName)s - %(message)s'
+
+filters:
+  error_filter:
+    (): lexicon.lexicon.LEXICON_RU
+
+  critical_filter:
+    (): log_filters.CriticalLogFilter
+
+  debug_warning_filter:
+  (): log_filters.DebugWarningFilter
+handlers:
+  default:
+    class: logging.StreamHandler
+    formatter: default
+
+  stderr:
+    class: logging.StreamHandler
+
+  stdout:
+    class: logging.StreamHandler
+    formatter: default
+    filters: [debug_warning_filter]
+    stream: ext://sys.stdout
+
+  error_file:
+    class: logging.FileHandler
+    filename: error.log
+    mode: w
+    level: DEBUG
+    formatter: default
+    filters: [error_filter]
+
+  critical_file:
+    class: logging.FileHandler
+    filename: critical.log
+    mode: w
+    formatter: defualt
+    filters: [critical_filter]
+
+loggers:
+  tasks_handlers:
+    level: DEBUG
+    handlers: [error_file,stdout]
+
+root:
+  formatter: default
+  handlers: [default]
