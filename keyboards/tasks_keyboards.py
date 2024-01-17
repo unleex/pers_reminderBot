@@ -14,8 +14,14 @@ to_menu = InlineKeyboardButton(
 )
 homework_service_butts = [edit,to_menu]
 
-confirm = InlineKeyboardButton(text='✅Добавить',callback_data='confirm_add_task')
-cancel = InlineKeyboardButton(text='❌Отмена',callback_data='cancel_add_task')
+confirm = InlineKeyboardButton(
+    text='✅Добавить',
+    callback_data='confirm_add_task')
+
+cancel = InlineKeyboardButton(
+    text='❌Отмена',
+    callback_data='cancel_add_task')
+
 adding_task_kb = InlineKeyboardMarkup(
     inline_keyboard=[
         [confirm],

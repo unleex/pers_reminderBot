@@ -48,3 +48,18 @@ def gen_tasks_inline_kb(tasks: list[Homework]) -> list[InlineKeyboardButton]:
          )
       butts.append(butt)
     return butts
+    
+def are_equal(inst1,inst2):
+    if inst1.__dict__.keys() != inst2.__dict__.keys():
+        raise Exception('Attributes must have same attributes')
+    return inst1.__dict__.items() == inst2.__dict__.items()
+
+def values(d: dict):
+   return [i for i in d.values()]
+
+def flatten_list(l):
+   flattened=[]
+   for i in l:
+      for j in i:
+         flattened.append(j)
+   return flattened

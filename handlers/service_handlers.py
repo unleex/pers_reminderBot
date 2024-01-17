@@ -13,7 +13,7 @@ async def info_start_command(message: Message,state: FSMContext):
     await message.answer(text=LEXICON_RU['start_command_text'])
     await state.clear()
 
-@rt.message(Command(commands='help'),StateFilter(default_state))
+@rt.message(Command(commands='help'))
 async def info_help_command(message: Message):
     await message.answer(text=LEXICON_RU['info_command_text'])
 
@@ -26,7 +26,7 @@ async def return_to_viewdays(clb: CallbackQuery):
                                       )
 
 #back to menu
-@rt.callback_query(F.data=='return_to_menu',StateFilter(default_state))
+@rt.callback_query(F.data=='return_to_menu',StateFilter(FSMStates.editing_tasks,FSMStates.viewing_schedule))
 async def return_to_menu(clb: CallbackQuery,state: FSMContext):
     await clb.message.edit_text(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)

@@ -7,18 +7,14 @@ formatters:
 
 filters:
   error_filter:
-    (): lexicon.lexicon.LEXICON_RU
+    (): logging_config.log_filters.ErrorLogFilter
 
   critical_filter:
-    (): log_filters.CriticalLogFilter
+    (): logging_config.log_filters.CriticalLogFilter
 
   debug_warning_filter:
-  (): log_filters.DebugWarningFilter
+    (): logging_config.log_filters.DebugWarningFilter
 handlers:
-  default:
-    class: logging.StreamHandler
-    formatter: default
-
   stderr:
     class: logging.StreamHandler
 
@@ -40,8 +36,11 @@ handlers:
     class: logging.FileHandler
     filename: critical.log
     mode: w
-    formatter: defualt
+    formatter: default
     filters: [critical_filter]
+  default:
+    class: logging.StreamHandler
+    formatter: default
 
 loggers:
   tasks_handlers:
