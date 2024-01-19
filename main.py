@@ -22,7 +22,7 @@ from create_dp import dp
 from keyboards.set_menu import set_main_menu
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from handlers import schedule_handlers, edit_days_handlers, service_handlers, tasks_handlers
-import alert_deadlines
+import scheduled_events.alert_deadlines as alert_deadlines
 async def main() -> None:
     bot = Bot(token=bot_token,
               parse_mode='HTML')
