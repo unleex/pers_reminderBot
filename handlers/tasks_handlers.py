@@ -61,14 +61,17 @@ async def add_task_command(msg: Message,state: FSMContext):
 async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
     schedule.tasks.append(Homework(subject_task=new_homework.subject_task,
                                    due = new_homework.due))
+    
+    deadline = format_due(new_homework.due)
+    await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,deadline)
+    logger.debug(msg=(f'Новая задача добавлена.\n\t'
+                f'{clb.from_user.id}\t{new_homework.subject_task}\t{deadline}'))
+
     new_homework.subject_task={}
     new_homework.due={}
-    deadline = format_due(new_homework.due)
-    await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,new_homework.due)
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
 
-    logger.debug('Новая задача добавлена.\n', clb.from_user.id,new_homework.subject_task,new_homework.due)
 
 #cancel adding task
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
