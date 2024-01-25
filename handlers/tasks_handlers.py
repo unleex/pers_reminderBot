@@ -2,8 +2,6 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import logging 
-logger = logging.getLogger(__name__)
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import CallbackQuery, Message,InlineKeyboardButton,InlineKeyboardMarkup
@@ -15,9 +13,10 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram import Router, F
 from keyboards.tasks_keyboards import homework_kb_builder,homework_service_butts
 from states.states import FSMStates
-from services.services import getdict_frommsg,gen_tasks_inline_kb,are_equal
+from services.services import getdict_frommsg,gen_tasks_inline_kb,are_equal,format_due
 from my_typing.typing import new_homework,schedule,Homework
 from keyboards.tasks_keyboards import adding_task_kb
+from scheduled_events.alert_deadlines import schedule_deadline_alert
 rt = Router()
 
 import logging
@@ -64,8 +63,12 @@ async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
                                    due = new_homework.due))
     new_homework.subject_task={}
     new_homework.due={}
+    deadline = format_due(new_homework.due)
+    await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,new_homework.due)
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
+
+    logger.debug('Новая задача добавлена.\n', clb.from_user.id,new_homework.subject_task,new_homework.due)
 
 #cancel adding task
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
@@ -116,7 +119,7 @@ async def complete_task(clb: CallbackQuery,state: FSMContext):
                                             resize_keyboard=True
                                         ))
             await state.set_state(FSMStates.editing_tasks)
-            return 'SUCCESS'
+            logging.debug('Successfully completed task:\n', subject,task,due)
     await clb.message.edit_text(
         "Couldn't find task to complete. Idk why, really..")
     await state.set_state(FSMStates.editing_tasks)

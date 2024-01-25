@@ -3,3 +3,4 @@ __pycache__/
 *.py[cod]
 bin/
 users.json
+bot_test.py

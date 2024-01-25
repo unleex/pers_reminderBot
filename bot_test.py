@@ -20,7 +20,6 @@ rt = Router()
 dp = Dispatcher()
 #change dp to rt
 #include router
-
 async def main() -> None:
     bot = Bot(token=bot_token,
               parse_mode='HTML')
@@ -33,12 +32,19 @@ if __name__ == '__main__':
 #    def wrapper(data):
 #       func(*args, **kwargs)
 #    return wrapper
-    
 # @check_deadlines
+def activate(func):
+    def wrapper():
+        return True
+    return wrapper
+
+@activate
+async def ping():
+   print('pong!')#await bot.send_message(chat_id='1547173190', text='pong')
+
+
 async def alert_deadline(data): 
   print('success!1')
-  bot = Bot(token=bot_token,
-              parse_mode='HTML')
   date_time = str(datetime.datetime.today()).split()
   date_time[1] = date_time[1][:date_time[1].rfind('.')]
   for chat_id in values(data):
@@ -46,3 +52,11 @@ async def alert_deadline(data):
         if task['deadline'] == date_time:
             await print('success!')#bot.send_message(chat_id=chat_id, text=f'ДЕДЛАЙН СЕГОДНЯ: {task}')
         
+'''
+-3.
+-2. get the deadlines
+-1. compare deadlines with time
+//activate only on deadlines
+    1. search for time updates  
+    2. activate only on required update
+alert on current deadline!'''

@@ -23,6 +23,9 @@ from keyboards.set_menu import set_main_menu
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from handlers import schedule_handlers, edit_days_handlers, service_handlers, tasks_handlers
 import scheduled_events.alert_deadlines as alert_deadlines
+
+logging.info("AAAND we're online")
+
 async def main() -> None:
     bot = Bot(token=bot_token,
               parse_mode='HTML')
@@ -31,7 +34,6 @@ async def main() -> None:
     dp.include_router(tasks_handlers.rt)
     dp.include_router(edit_days_handlers.rt)
     dp.include_router(schedule_handlers.rt)
-    dp.include_router(alert_deadlines.rt)
 
     await set_main_menu(bot)
 

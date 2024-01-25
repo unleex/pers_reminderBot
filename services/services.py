@@ -63,3 +63,6 @@ def flatten_list(l):
       for j in i:
          flattened.append(j)
    return flattened
+
+def format_due(due):
+   return due
