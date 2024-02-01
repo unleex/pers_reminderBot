@@ -63,7 +63,8 @@ async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
                                    due = new_homework.due))
     
     deadline = format_due(new_homework.due)
-    await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,deadline)
+    if deadline:
+        await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,deadline)
     logger.debug(msg=(f'Новая задача добавлена.\n\t'
                 f'{clb.from_user.id}\t{new_homework.subject_task}\t{deadline}'))
 

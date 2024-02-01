@@ -22,6 +22,7 @@ from create_dp import dp
 from keyboards.set_menu import set_main_menu
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from handlers import schedule_handlers, edit_days_handlers, service_handlers, tasks_handlers
+
 import scheduled_events.alert_deadlines as alert_deadlines
 
 logging.info("AAAND we're online")
@@ -42,6 +43,5 @@ async def main() -> None:
 
     redis = Redis(host='localhost')
     storage = RedisStorage(redis=redis)
-
 if __name__ == '__main__':
     asyncio.run(main()) 
