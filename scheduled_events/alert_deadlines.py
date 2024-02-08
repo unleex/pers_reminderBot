@@ -4,10 +4,7 @@ import arq
 import time
 import asyncio
 import logging
-from arq import create_pool
-from arq.connections import RedisSettings
-
-
+from config.config import arqredis
 logger = logging.getLogger(__name__)
 
 bot_token = '6631562385:AAF4EyJbnHNCK0u1afPCuHHgFFz1uhmVg2o'
@@ -21,7 +18,7 @@ async def alert_deadline(id, subject_task, due):
     await bot.send_message(chat_id=id, text=message)
     
 async def schedule_deadline_alert(id,subject_task,due):
-	redis = await create_pool(RedisSettings())
+	redis = arqredis
 
 	alert_deadline_task = asyncio.create_task(alert_deadline(id,subject_task,due))
 	redis.enqueue_job('alert_deadline_task',_defer_until=due)

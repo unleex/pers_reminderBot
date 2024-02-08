@@ -1,10 +1,11 @@
 from aiogram.types import CallbackQuery
 from aiogram.filters.callback_data import CallbackData
-
+from datetime import datetime
 class Homework:
-    def __init__(self,subject_task={},due=''):
+    def __init__(self,subject_task={},dueday='',duetime=None):
         self.subject_task: dict = subject_task
-        self.due: str|None = due#make to unix time
+        self.dueday: str|None = dueday
+        self.duetime: datetime|None = duetime
 new_homework=Homework()
 
 class Schedule:
@@ -18,4 +19,4 @@ schedule = Schedule()
 class TasksCallbackFactory(CallbackData, prefix='tasks'):
     subject: str
     task: str
-    due: str|None
+    dueday: str|None

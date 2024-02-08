@@ -1,25 +1,41 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
+from datetime import datetime
 from my_typing.typing import TasksCallbackFactory,Homework
 def getlist_frommsg(text):
     list = text.split(sep='\n')
     return list
 
-days= ['пн','вт',"ср",'чт',"пт","сб","вс"]
-def extractday(text:str):
-  text = text.strip()
-  for day in days:
-    if day in text:
-      text = text.replace(day, "")
-      return day, text
-  return None, text
 
+def get_time_frommsg(text:str) -> tuple:
+  hour, minute = 9, 0
+  colonpos = text.find(':')
 
-def getdict_frommsg(text:str):
-  day, text= extractday(text)
+  if text[colonpos-2].isdigit():
+    hour = int(text[colonpos-2:colonpos])
+  elif text[colonpos-1].isdigit():
+    hour = int(text[colonpos-1])
+
+  if text[colonpos+2].isdigit():
+     minute = int(text[colonpos+1: colonpos+3])
+  elif text[colonpos+1].isdigit(): 
+     minute = int(text[colonpos-1])
+  return (int(hour), int(minute))
+
+def get_subject_task_frommsg(text:str):
+
   subject = text[:text.find("-")].strip().capitalize()
   task = text[text.find("-")+1:].strip().capitalize()
-  return [{subject: task}, day]
+  return (subject, task)
+
+
+def get_day_frommsg(text):
+  days= ['пн','вт',"ср",'чт',"пт","сб","вс"]
+  text = text.strip()
+  for day in days:
+     if text.find(day) != -1:
+        return day
+  return None
 
 
 def format_list(a: list)->str:
@@ -67,3 +83,9 @@ def flatten_list(l):
 def format_due(due):
    
    return due
+
+def find_and_replace(string, target, new):
+  if string.find(target) != -1:
+    string = string.replace(target, new)
+
+  return string
