@@ -38,6 +38,9 @@ loggers:
   tasks_handlers:
     level: DEBUG
     handlers: [error_handler,debug_warning_handler]
+  config.config:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
 root:
   level: DEBUG
   formatter: default

@@ -1,10 +1,11 @@
-#config
-import config.config
+#logging
 import logging.config
 import yaml
 with open('logging_config/logging_config.yaml', 'rt') as f:
     logging_config = yaml.safe_load(f.read())
 logging.config.dictConfig(logging_config)
+
+import config.config
 ####
 
 import asyncio
@@ -18,7 +19,8 @@ from handlers import schedule_handlers, edit_days_handlers, service_handlers, ta
 
 import scheduled_events.alert_deadlines as alert_deadlines
 
-logging.info("AAAND we're online")
+logger = logging.getLogger(__name__)
+logger.info("AAAND we're online")
 
 async def main() -> None:
     bot = config.config.bot

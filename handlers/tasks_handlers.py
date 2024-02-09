@@ -14,7 +14,7 @@ from aiogram import Router, F
 from keyboards.tasks_keyboards import homework_kb_builder,homework_service_butts
 from states.states import FSMStates
 from services.services import (get_subject_task_frommsg,gen_tasks_inline_kb, find_and_replace,
-                               are_equal,format_due,get_time_frommsg,get_day_frommsg)
+                               are_equal,normalize_duedate,get_time_frommsg,get_day_frommsg)
 from my_typing.typing import new_homework,schedule,Homework
 from keyboards.tasks_keyboards import adding_task_kb
 from scheduled_events.alert_deadlines import schedule_deadline_alert
@@ -73,9 +73,9 @@ async def confirm_add_task(clb: CallbackQuery,state:FSMContext):
                                    dueday = new_homework.dueday))
     
     if new_homework.dueday:
-        dueday = format_due(new_homework.dueday)
+        duedate = normalize_duedate(new_homework.dueday)
         await schedule_deadline_alert(clb.from_user.id,new_homework.subject_task,dueday)
-    logger.debug(msg=(f'Новая задача добавлена.\n\t'
+    logger.info(msg=(f'Новая задача добавлена.\n\t'
                 f'{clb.from_user.id}\t{new_homework.subject_task}\t{dueday}'))
 
     new_homework.subject_task={}

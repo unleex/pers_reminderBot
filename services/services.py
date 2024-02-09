@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
-from datetime import datetime
+from datetime import datetime,date
 from my_typing.typing import TasksCallbackFactory,Homework
 def getlist_frommsg(text):
     list = text.split(sep='\n')
@@ -80,9 +80,27 @@ def flatten_list(l):
          flattened.append(j)
    return flattened
 
-def format_due(due):
-   
-   return due
+def normalize_duedate(dueday):
+    days_en_ru = {'Mon':"пн",
+                 'Tue':"вт",
+                 'Wed':"ср",
+                 'Thu':"чт",
+                 'Fri':"пт",
+                 'Sat':"сб",
+                 'Sun':"вс"}
+    day_to_num = {"пн":0,
+                 "вт":1,
+                 "ср":2,
+                 "чт":3,
+                 "пт":4,
+                 "сб":5,
+                 "вс":6}
+    curr_weekday = datetime.strftime(datetime.today(),'%a')
+    curr_weekday = day_to_num[days_en_ru[curr_weekday]]
+    due_weekday = day_to_num[dueday]
+
+    norm_dueday = int(datetime.today().strftime('%d')) - curr_weekday + due_weekday + 7*(due_weekday <= curr_weekday)
+    return norm_dueday
 
 def find_and_replace(string, target, new):
   if string.find(target) != -1:
