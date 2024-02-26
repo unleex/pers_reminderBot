@@ -1,31 +1,44 @@
-#config
-import os
-from environs import Env
-env = Env()
-env.read_env()
-bot_token = env('BOT_TOKEN')
-admin_id = env.int('ADMIN_ID')
-print(os.getenv('BOT_TOKEN'))   
-print(os.getenv('ADMIN_ID'))
-from handlers import schedule_handlers, edit_days_handlers, service_handlers, tasks_handlers
-####
+#logging
+import logging.config
+import yaml
+with open('logging_config/logging_config.yaml', 'rt') as f:
+    logging_config = yaml.safe_load(f.read())
+logging.config.dictConfig(logging_config)
 
+import config.config
+####
+import os
 import asyncio
+import logging
 from aiogram import Bot
 from create_dp import dp
 from keyboards.set_menu import set_main_menu
-from aiogram.fsm.storage.redis import RedisStorage, Redis
+from arq.connections import create_pool, RedisSettings
+
+from handlers import schedule_handlers, edit_days_handlers, service_handlers, tasks_handlers
+
+
+logger = logging.getLogger(__name__)
+logger.info("AAAND we're online")
+
 async def main() -> None:
-    bot = Bot(token=bot_token,
-              parse_mode='HTML')
+    bot = config.config.bot
+    
     dp.include_router(service_handlers.rt)
     dp.include_router(tasks_handlers.rt)
     dp.include_router(edit_days_handlers.rt)
     dp.include_router(schedule_handlers.rt)
+
+    redis_pool = await create_pool(RedisSettings)
     await set_main_menu(bot)
+
     await bot.delete_webhook(drop_pending_updates=1)
-    await dp.start_polling(bot)
-    redis = Redis(host='localhost')
-    storage = RedisStorage(redis=redis)
+    await dp.start_polling(bot,
+                           arqredis = redis_pool)
+
+    redis = config.config.redis
+    storage = config.config.storage
+
+
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(main()) 

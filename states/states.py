@@ -9,3 +9,5 @@ class FSMStates(StatesGroup):
     editing_day = State()
     editing_tasks = State()
     adding_task = State()
+    viewing_task = State()
+    viewing_schedule= State()

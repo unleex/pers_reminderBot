@@ -1,5 +1,5 @@
 from environs import Env
-
+import os
 from aiogram import Bot
 
 from aiogram.fsm.storage.redis import RedisStorage, Redis
@@ -38,3 +38,5 @@ class WorkerSettings():
 
 redis = Redis(host='localhost')
 storage = RedisStorage(redis=redis)
+
+#os.system('arq config.config.WorkerSettings')

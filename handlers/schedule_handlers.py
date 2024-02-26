@@ -40,7 +40,7 @@ async def edit_schedule_confirm(clb: CallbackQuery,state: FSMContext):
 @rt.callback_query(F.data=='cancel_edit_schedule',StateFilter(FSMStates.editing_schedule))
 async def edit_schedule_cancel(clb: CallbackQuery, state: FSMContext):
     schedule.new_schedule.clear()
-    await clb.message.edit_text(
+    await clb.message.edift_text(
         text='Изменения отменены.',
         reply_markup=call_schedule_keyboard
     )
@@ -48,17 +48,18 @@ async def edit_schedule_cancel(clb: CallbackQuery, state: FSMContext):
                                
 
 #   view schedule
-@rt.callback_query(F.data=='view_schedule')
-async def view_schedule_command(clb: CallbackQuery):
+@rt.callback_query(F.data=='view_schedule',StateFilter(default_state))
+async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
     await clb.message.edit_text(text=("Выбери день, расписание которого "
                                       "хочешь посмотреть."),
                                       reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True)
                                       )
+    await state.set_state(FSMStates.viewing_schedule)
 
 
 #       view day
-@rt.callback_query(F.data.in_(viewdays))
-async def view_day_command(clb: CallbackQuery):
+@rt.callback_query(F.data.in_(viewdays),StateFilter(FSMStates.viewing_schedule))
+async def view_day_command(clb: CallbackQuery, state: FSMContext):
     day = clb.data[4:]
     output = format_list(schedule.week_schedule[day])
     await clb.message.edit_text(text=output,
