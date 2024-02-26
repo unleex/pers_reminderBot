@@ -1,0 +1,47 @@
+version: 1
+disable_existing_loggers: True
+
+formatters:
+  default: 
+    format: '#%(levelname)-8s %(name)s:%(funcName)s - %(message)s'
+
+
+filters:
+  critical_filter: 
+    (): logging_config.log_filters.CriticalLogFilter
+  debug_warning_filter:
+    (): logging_config.log_filters.DebugWarningLogFilter
+  error_filter:
+    (): logging_config.log_filters.ErrorLogFilter
+
+handlers:
+  critical_handler:
+    formatter: default
+    class: logging.StreamHandler
+    filters: [critical_filter]
+  error_handler:
+    formatter: default
+    class: logging.StreamHandler
+    filters: [error_filter]
+  debug_warning_handler:
+    formatter: default
+    class: logging.StreamHandler
+    filters: [debug_warning_filter]
+  default:
+    class: logging.StreamHandler
+    formatter: default
+
+loggers:
+  alert_deadlines:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
+  tasks_handlers:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
+  config.config:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
+root:
+  level: DEBUG
+  formatter: default
+  handlers: [default]
