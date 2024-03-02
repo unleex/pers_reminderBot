@@ -9,12 +9,31 @@ from lexicon.lexicon import LEXICON_RU
 from aiogram import Router, F
 from states.states import FSMStates
 from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 rt = Router()
 
 @rt.message(CommandStart())
 async def info_start_command(message: Message,state: FSMContext):
     await message.answer(text=LEXICON_RU['start_command_text'])
     await state.clear()
+    with open('db/db.json','r') as fp:
+        db: dict = json.load(fp)
+    user_data = message.from_user
+    if not user_data.id in db.keys():
+        user = {user_data.id: {
+                "tasks": {},
+                "schedule": {}
+            }
+        }
+        with open('db/db.json','w') as fp:
+            json.dump(user, fp, indent='\t')
+        logger.info(f'New user registered. \n'
+                    f'Name: {user_data.first_name} {user_data.last_name}.\n' 
+                    f'ID: {user_data.id}')
+
 
 @rt.message(Command(commands='help'))
 async def info_help_command(message: Message):
