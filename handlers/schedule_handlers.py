@@ -1,5 +1,5 @@
 import sys, os
-
+import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
@@ -30,6 +30,12 @@ async def edit_schedule_command(clb: CallbackQuery, state: FSMContext):
 @rt.callback_query(F.data=='confirm_edit_schedule',StateFilter(FSMStates.editing_schedule))
 async def edit_schedule_confirm(clb: CallbackQuery,state: FSMContext):
     schedule.week_schedule.update(schedule.new_schedule)
+
+    with open('db/db.json','r') as fp:
+        db: dict = json.load(fp)
+    db[str(clb.from_user.id)]["schedule"] = schedule.new_schedule
+    with open('db/db.json','w') as fp:
+        json.dump(db, fp, indent='\t')
     await clb.message.edit_text(
         text='Расписание заполнено!',
         reply_markup=call_schedule_keyboard
