@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -75,7 +76,7 @@ async def confirm_add_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqRedi
     schedule.tasks.append(Homework(subject_task=new_homework.subject_task,
                                    dueday = new_homework.dueday,
                                    duetime=new_homework.duetime))
-    
+    due_date,due_time=None,None
     if new_homework.dueday:
         due_date = normalize_duedate(new_homework.dueday)
         due_time = new_homework.duetime
@@ -85,6 +86,17 @@ async def confirm_add_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqRedi
             f'User: {clb.from_user.id}\tSubject, task: {new_homework.subject_task}\tDeadline: {due_datetime}'))
         await schedule_deadline_alert(arqredis,clb.from_user.id,new_homework.subject_task,due_datetime)
 
+    with open('db/db.json','r') as fp:
+        db: dict = json.load(fp)
+    db[str(clb.from_user.id)]["tasks"].update(
+        {new_homework.subject_task:{
+            "duedate": due_date,
+            "duetime": due_time}
+        }
+    )
+    with open('db/db.json','w') as fp:
+            json.dump(db, fp, indent='\t')
+    
     new_homework.subject_task={}
     new_homework.dueday=''
     new_homework.duetime = None
@@ -132,9 +144,9 @@ async def complete_task(clb: CallbackQuery,state: FSMContext):
     completed_task = Homework(subject_task={subject: task}, dueday=dueday)
 
     for target_task in schedule.tasks:
-        if are_equal(completed_task, target_task):#error
+        if are_equal(completed_task, target_task):
             schedule.tasks.remove(target_task)
-            homework_kb_builder.from_markup() #avoid duplication
+            #homework_kb_builder.adjust
             homework_kb_builder.row(*gen_tasks_inline_kb(schedule.tasks),width=1)
             homework_kb_builder.row(*homework_service_butts,width=1)
             await clb.message.edit_text(text='Задание выполнено!',
@@ -143,8 +155,8 @@ async def complete_task(clb: CallbackQuery,state: FSMContext):
                                         ))
             await state.set_state(FSMStates.editing_tasks)
             logging.debug('Successfully completed task:\n', subject,task,dueday)
-    await clb.message.edit_text(
-        "Couldn't find task to complete. Idk why, really..")
+        await clb.message.edit_text(
+        "Ошибка!")
     await state.set_state(FSMStates.editing_tasks)
     logging.error('Could not compare '
                   f'Homework({completed_task.subject_task}, {completed_task.dueday}) ' 
