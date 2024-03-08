@@ -1,6 +1,6 @@
 from environs import Env
 import os
-from aiogram import Bot
+from aiogram import Bot, Dispatcher
 
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 from arq.connections import RedisSettings
@@ -38,5 +38,6 @@ class WorkerSettings():
 
 redis = Redis(host='localhost')
 storage = RedisStorage(redis=redis)
+dp = Dispatcher(storage=storage)
 
 #os.system('arq config.config.WorkerSettings')
