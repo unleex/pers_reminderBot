@@ -27,10 +27,10 @@ logger.info("AAAND we're online")
 async def main() -> None:
     bot = config.config.bot
     
-    dp.include_router(other_handlers.rt)
-    dp.include_router(tasks_handlers.rt)
-    dp.include_router(edit_days_handlers.rt)
     dp.include_router(schedule_handlers.rt)
+    dp.include_router(edit_days_handlers.rt)
+    dp.include_router(tasks_handlers.rt)#TypeError: object bool can't be used in 'await' expression
+    dp.include_router(other_handlers.rt)
 
     dp.update.middleware(middlewares.DataBaseAccessor())
     redis_pool = await create_pool(RedisSettings)
@@ -39,7 +39,7 @@ async def main() -> None:
     await bot.delete_webhook(drop_pending_updates=1)
     await dp.start_polling(bot,
                            arqredis = redis_pool,
-                           user_db = json.load(open('db/db.json','r')))
+                           user_db = json.load(open('db/db.json','r'))) 
 
 if __name__ == '__main__':
     asyncio.run(main()) 

@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from aiogram.types import Message,CallbackQuery
+from aiogram.types import Message,CallbackQuery, Update
 from aiogram.filters import Command, CommandStart,StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -22,7 +22,13 @@ async def info_start_command(message: Message,state: FSMContext,user_db: dict):
     if not str(user_data.id) in json.load(open('db/db.json','r')):
         user_db = {
                 "homeworks": {},
-                "schedule": {}
+                "schedule": {'Понедельник': [], 
+                              'Вторник': [], 
+                              'Среда': [], 
+                              'Четверг': [], 
+                              'Пятница': [], 
+                              'Суббота': [], 
+                              'Воскресенье': []}
             }        
         edit_user_db(user_data.id,user_db)
         await message.answer(text=(LEXICON_RU['new_user_registered']
@@ -56,4 +62,8 @@ async def return_to_menu(clb: CallbackQuery,state: FSMContext):
 async def call_schedule_command(msg: Message,state: FSMContext):
     await msg.answer(text='*here will be schedule on today or tomorrow*',
                      reply_markup=call_schedule_keyboard)
-    state.clear()
+    await state.clear()
+
+@rt.message()
+async def else_handler(msg: Message):
+    await msg.answer(LEXICON_RU['unknown_instruction'])
