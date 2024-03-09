@@ -3,8 +3,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from my_typing.typing import schedule
-from my_typing.typing import schedule
 
 homework_kb_builder = InlineKeyboardBuilder()#
 edit = InlineKeyboardButton(

@@ -10,5 +10,5 @@ bot = Bot(token=bot_token)
 
 async def schedule_deadline_alert(arqredis,chat_id,subject_task,due):
     logger.info(('Task notification queued.',
-              await arqredis.enqueue_job('alert_deadline',chat_id, subject_task,_defer_by=timedelta(seconds=10)),
+              await arqredis.enqueue_job('alert_deadline',chat_id, subject_task,_defer_until=due),
                      'Deferred until', due))

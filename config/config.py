@@ -37,7 +37,7 @@ class WorkerSettings():
     functions = [alert_deadline,]
 
 redis = Redis(host='localhost')
-storage = RedisStorage(redis=redis)
+storage = RedisStorage(redis=redis) 
 dp = Dispatcher(storage=storage)
 
 #os.system('arq config.config.WorkerSettings')

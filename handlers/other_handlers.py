@@ -71,7 +71,7 @@ async def call_schedule_command(msg: Message,state: FSMContext,user_db: dict):
                  'Sat':"Суббота",
                  'Sun':"Воскресенье"}
     weekday = datetime.today().strftime('%a')
-    schedule_text = '\n'.join(user_db['schedule'][days_en_ru[weekday]])
+    schedule_text = '\n'+'\n'.join(user_db['schedule'][days_en_ru[weekday]])
     await msg.answer(text=f"Расписание на сегодня: {schedule_text}",
                      reply_markup=call_schedule_keyboard)
     await state.clear()
