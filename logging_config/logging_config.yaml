@@ -30,6 +30,12 @@ handlers:
   default:
     class: logging.StreamHandler
     formatter: default
+  file_handler:
+    formatter: default
+    class: logging.FileHandler
+    filename: logs/info.log
+    mode: w
+    filters: [debug_warning_filter,error_filter,critical_filter]
 
 loggers:
   alert_deadlines:
@@ -38,12 +44,21 @@ loggers:
   tasks_handlers:
     level: DEBUG
     handlers: [error_handler,debug_warning_handler]
+  schedule_handlers:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
+  edit_days_handlers:
+    level: DEBUG
+    handlers: [error_handler,debug_warning_handler]
   config.config:
     level: DEBUG
     handlers: [error_handler,debug_warning_handler]
   service_handlers:
     level: DEBUG
     handlers: [error_handler,debug_warning_handler]
+  middlewares.middlewares:
+    level: DEBUG
+    handlers: [file_handler]
 root:
   level: DEBUG
   formatter: default
