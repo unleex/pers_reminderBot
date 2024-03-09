@@ -7,9 +7,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from lexicon.lexicon import LEXICON_RU
 from aiogram import Router, F
+
 from states.states import FSMStates
 from services.services import edit_user_db
 from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
+
+from datetime import datetime
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -58,9 +61,18 @@ async def return_to_menu(clb: CallbackQuery,state: FSMContext):
                      reply_markup=call_schedule_keyboard)
     await state.clear()
 #main
-@rt.message(Command(commands='schedule'),StateFilter(default_state))
-async def call_schedule_command(msg: Message,state: FSMContext):
-    await msg.answer(text='*here will be schedule on today or tomorrow*',
+@rt.message(Command(commands='menu'),StateFilter(default_state))
+async def call_schedule_command(msg: Message,state: FSMContext,user_db: dict):
+    days_en_ru = {'Mon':"Понедельник",
+                 'Tue':"Вторник",
+                 'Wed':"Среда",
+                 'Thu':"Четверг",
+                 'Fri':"Пятница",
+                 'Sat':"Суббота",
+                 'Sun':"Воскресенье"}
+    weekday = datetime.today().strftime('%a')
+    schedule_text = '\n'.join(user_db['schedule'][days_en_ru[weekday]])
+    await msg.answer(text=f"Расписание на сегодня: {schedule_text}",
                      reply_markup=call_schedule_keyboard)
     await state.clear()
 
