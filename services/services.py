@@ -1,18 +1,12 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
 from datetime import datetime,date,time
-from my_typing.typing import TasksCallbackFactory,Homework
+import json
 
-
-def getlist_frommsg(text):
-    list = text.split(sep='\n')
-    return list
-
-def get_subject_task_frommsg(text:str):
-
-  subject = text[:text.find("-")].strip().capitalize()
-  task = text[text.find("-")+1:].strip().capitalize()
-  return (subject, task)
+def edit_user_db(id: str, data: dict|list):
+   db = json.load(open('db/db.json','r'))
+   db[str(id)] = data
+   json.dump(db, open('db/db.json','w'),indent='\t')
 
 
 def get_day_frommsg(text):
@@ -31,25 +25,6 @@ def format_list(a: list)->str:
         output += f'{j}. {i.capitalize()}\n'
         j += 1
     return output
-def _format_text(subject_task: dict) -> str:
-   subject = list(subject_task.keys())[0]
-   task = list(subject_task.values())[0]
-   return f'{subject}: {task}'
-
-def gen_tasks_inline_kb(tasks: list[Homework]) -> list[InlineKeyboardButton]:
-    butts: list[InlineKeyboardButton]
-    butts=[]
-    for task in tasks:
-      butt = InlineKeyboardButton(
-         text=_format_text(task.subject_task),
-         callback_data = TasksCallbackFactory(
-            subject = list(task.subject_task.keys())[0],
-            task = list(task.subject_task.values())[0],
-            due = task.due
-         ).pack()
-         )
-      butts.append(butt)
-    return butts
     
 def are_equal(inst1,inst2):
     if inst1.__dict__.keys() != inst2.__dict__.keys():
@@ -59,6 +34,9 @@ def are_equal(inst1,inst2):
 def values(d: dict):
    return [i for i in d.values()]
 
+def keys(d: dict):
+   return [i for i in d.keys()]
+
 def flatten_list(l):
    flattened=[]
    for i in l:
@@ -67,7 +45,7 @@ def flatten_list(l):
    return flattened
 
 def get_time_frommsg(text:str) -> tuple[int,int]:
-  hour, minute = 9, 0
+  hour, minute = None, None
   colonpos = text.find(':')
 
   if text[colonpos-2].isdigit():
