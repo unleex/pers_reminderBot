@@ -16,7 +16,7 @@ from datetime import datetime
 from keyboards.tasks_keyboards import homework_service_butts
 from states.states import FSMStates
 from services.services import (find_and_replace,
-                               normalize_duedate,get_time_frommsg,get_day_frommsg,keys)
+                               normalize_duedate,get_time_frommsg,get_day_frommsg,keys,edit_user_db)
 from keyboards.tasks_keyboards import adding_task_kb
 from states.states import FSMStates
 from scheduler.alert_deadlines import schedule_deadline_alert
@@ -99,7 +99,7 @@ async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
 
 #confirm adding task
 @rt.callback_query(F.data == 'confirm_add_task',StateFilter(FSMStates.adding_task))
-async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqRedis,user_db):
+async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqRedis, user_db: dict):
     new_homework = await state.get_data()
     hw_data = list(new_homework.values())[0]
 
@@ -110,6 +110,9 @@ async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqR
         hw_data["duedate"][0] += 2000
         due_datetime = datetime(*hw_data["duedate"],*hw_data["duetime"])
         await schedule_deadline_alert(arqredis,clb.from_user.id,hw_data,due_datetime)
+
+    user_db["homeworks"].update(new_homework)
+    edit_user_db(clb.from_user.id, user_db)
 
     logger.info(msg=(f'New homework added.\n\t'
             f'User: {clb.from_user.id}\t'
