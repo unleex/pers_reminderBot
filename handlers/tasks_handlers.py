@@ -41,7 +41,7 @@ async def tasks_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
 
     homeworks = user_db["homeworks"]
     kb_builder = InlineKeyboardBuilder()
-    buttons: list[InlineKeyboardButton]
+    buttons: list[InlineKeyboardButton] = []
     for homework in homeworks:
         print(keys(homework)[0])
         buttons.append(InlineKeyboardButton(text=
@@ -78,45 +78,44 @@ async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
     out += f'{task}\n'
     out += day_out
 
+    due_date = None
     if due_day:
         due_date = normalize_duedate(due_day)
         out = f'Записано на {due_day}'
 
-    user_db["homeworks"].update(
-        {'Unconfirmed homework': {
-            "subject": subject,
-            "task": task,
-            "duedate": due_date,
-            "duetime": due_time}
+    homework_id = f'Homework_{msg.from_user.id}_{datetime.today().strftime("%Y/%m/%d_%H:%M%S")}'
+    await state.set_data(
+        { 
+        homework_id: {
+        "subject": subject,
+        "task": task,
+        "duedate": due_date,
+        "duetime": due_time}
         }
     )
-    
+
     await msg.answer(out,reply_markup=adding_task_kb)
     await state.set_state(FSMStates.adding_task)
 
 #confirm adding task
 @rt.callback_query(F.data == 'confirm_add_task',StateFilter(FSMStates.adding_task))
 async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqRedis,user_db):
-    try:
-        new_homework: dict = user_db["homeworks"]['Unconfirmed homework']
-    
-    except KeyError:
-        await clb.message.edit_text('Неизвестная ошибка. ')
-        await state.clear()
-        return
-    if new_homework["dueday"]:
+    new_homework = await state.get_data()
+    hw_data = list(new_homework.values())[0]
+
+    due_datetime = None
+    if hw_data["duedate"]:
 
         #add 2000 to year because it decreases to tens(2024->24)
-        new_homework["duedate"][0] += 2000
-        due_datetime = datetime(*new_homework["duedate"],*new_homework["duetime"])
-        await schedule_deadline_alert(arqredis,clb.from_user.id,new_homework,due_datetime)
+        hw_data["duedate"][0] += 2000
+        due_datetime = datetime(*hw_data["duedate"],*hw_data["duetime"])
+        await schedule_deadline_alert(arqredis,clb.from_user.id,hw_data,due_datetime)
 
     logger.info(msg=(f'New homework added.\n\t'
             f'User: {clb.from_user.id}\t'
-            f'Subject: {new_homework["subject"]}\t' 
-            f'Task: {new_homework["subject"]}\t'
+            f'Subject: {hw_data["subject"]}\t' 
+            f'Task: {hw_data["task"]}\t'
             f'Deadline: {due_datetime}'))
-    #Homework_{msg.from_user.id}_{datetime.today().strftime("%Y/%m/%d_%H:%M%S")}
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
 

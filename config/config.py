@@ -25,9 +25,9 @@ async def startup(ctx):
 async def shutdown(ctx):
     await ctx['bot'].session.close()
 
-async def alert_deadline(ctx, chat_id, subject_task):
+async def alert_deadline(ctx, chat_id, subject, task):
     bot: Bot = ctx['bot']
-    text = f'ДЕДЛАЙН: {subject_task}'
+    text = f'ДЕДЛАЙН: {subject} - {task}'
     await bot.send_message(chat_id=chat_id, text=text)
 
 class WorkerSettings():
