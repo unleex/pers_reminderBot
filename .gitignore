@@ -1,0 +1,12 @@
+dump.rdb
+*/__pycache__/
+*.py[cod]
+/bin
+testmain.py 
+*.rdb
+*.pyc
+venv/
+.env
+*.log
+.DS_Store
+db

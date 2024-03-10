@@ -99,4 +99,5 @@ async def call_menu_command(msg: Message,state: FSMContext,user_db: dict):
 
 @rt.message()
 async def else_handler(msg: Message):
-    await msg.answer(LEXICON_RU['unknown_instruction'])
+    await msg.answer(LEXICON_RU['UnknownInstruction'])
+    logger.info('Unknown instruction: %s, by %s', (msg.text,msg.from_user.id))

@@ -31,9 +31,9 @@ async def edit_schedule_command(clb: CallbackQuery, state: FSMContext):
 @rt.callback_query(F.data == 'confirm_edit_schedule',StateFilter(FSMStates.editing_schedule))
 async def confirm_edit_schedule(clb: CallbackQuery,state: FSMContext,user_db: dict):
     ctx_data = await state.get_data()
-    print(user_db,ctx_data)
     user_db["schedule"].update(ctx_data)
     edit_user_db(clb.from_user.id, user_db)
+    logger.info(f'Schedule filled by {clb.from_user.id}: {user_db["schedule"]}')
     await clb.message.edit_text(
         text='Расписание заполнено!',
         reply_markup=call_schedule_keyboard

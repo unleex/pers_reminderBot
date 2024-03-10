@@ -80,7 +80,8 @@ async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
     due_date = None
     if due_day:
         due_date = normalize_duedate(due_day)
-        out = f'Записано на {due_day}'
+        day_out = due_day
+        out += f'Записано на {day_out}'
 
     homework_id = f'Homework_{msg.from_user.id}_{datetime.today().strftime("%Y/%m/%d_%H:%M:%S")}'
     await state.set_data(

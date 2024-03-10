@@ -27,12 +27,10 @@ viewdays = [f'view{i}' for i in days]
 async def edit_day_command(clb: CallbackQuery,state: FSMContext):
     global edit_day_clb 
     edit_day_clb = clb
-    logger.debug(__name__)
     await clb.message.edit_text(text=LEXICON_RU['edit_days_text'],
                                 reply_markup=cancel_edit_day_keyboard)
     await state.set_data({'day': clb.data[4:]})
     await state.set_state(FSMStates.editing_day)
-    logger.debug(edit_day_command.__name__)
 
 
 @rt.message(IsDayScheduleFormat(),StateFilter(FSMStates.editing_day, F.data.in_(editdays)))
