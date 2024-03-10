@@ -71,7 +71,7 @@ async def view_day_command(clb: CallbackQuery, state: FSMContext,user_db: dict):
         j += 1
 
     if not output:
-        output = LEXICON_RU['EmptySchedule']
+        output = f'{clb.data[4:]}: {LEXICON_RU["EmptySchedule"]}'
     await clb.message.edit_text(text=output,
                                 reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True))
     state.set_state(FSMStates.viewing_day)
