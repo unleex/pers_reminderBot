@@ -56,13 +56,28 @@ async def return_to_viewdays(clb: CallbackQuery):
 
 #back to menu
 @rt.callback_query(F.data=='return_to_menu',StateFilter(FSMStates.editing_tasks,FSMStates.viewing_schedule))
-async def return_to_menu(clb: CallbackQuery,state: FSMContext):
-    await clb.message.edit_text(text='*here will be schedule on today or tomorrow*',
+async def return_to_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
+    days_en_ru = {'Mon':"Понедельник",
+                 'Tue':"Вторник",
+                 'Wed':"Среда",
+                 'Thu':"Четверг",
+                 'Fri':"Пятница",
+                 'Sat':"Суббота",
+                 'Sun':"Воскресенье"}
+    
+    weekday = datetime.today().strftime('%a')
+    schedule = user_db['schedule'][days_en_ru[weekday]]
+    schedule_text = ''
+    j = 1
+    for i in schedule:
+        schedule_text += f'{j}. {i.capitalize()}\n'
+        j += 1
+    await clb.message.edit_text(text=f"Расписание на сегодня:\n {schedule_text}",
                      reply_markup=call_schedule_keyboard)
     await state.clear()
 #main
 @rt.message(Command(commands='menu'),StateFilter(default_state))
-async def call_schedule_command(msg: Message,state: FSMContext,user_db: dict):
+async def call_menu_command(msg: Message,state: FSMContext,user_db: dict):
     days_en_ru = {'Mon':"Понедельник",
                  'Tue':"Вторник",
                  'Wed':"Среда",

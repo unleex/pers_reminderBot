@@ -65,8 +65,8 @@ async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
 @rt.callback_query(F.data.in_(viewdays),StateFilter(FSMStates.viewing_schedule))
 async def view_day_command(clb: CallbackQuery, state: FSMContext,user_db: dict):
     j = 1
-    output: str
-    for i in user_db["schedule"].split('\n'):
+    output: str = ''
+    for i in user_db["schedule"][clb[5:]]:
         output += f'{j}. {i.capitalize()}\n'
         j += 1
     await clb.message.edit_text(text=output,
