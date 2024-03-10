@@ -45,19 +45,23 @@ def flatten_list(l):
    return flattened
 
 def get_time_frommsg(text:str) -> tuple[int,int]:
-  hour, minute = None, None
-  colonpos = text.find(':')
+   hour, minute = None, None
+   colonpos = text.find(':')
 
-  if text[colonpos-2].isdigit():
-    hour = int(text[colonpos-2:colonpos])
-  elif text[colonpos-1].isdigit():
-    hour = int(text[colonpos-1])
+   if text[colonpos-2].isdigit():
+      hour = int(text[colonpos-2:colonpos])
+   elif text[colonpos-1].isdigit():
+      hour = int(text[colonpos-1])
 
-  if text[colonpos+2].isdigit():
-     minute = int(text[colonpos+1: colonpos+3])
-  elif text[colonpos+1].isdigit(): 
-     minute = int(text[colonpos-1])
-  return (int(hour), int(minute))
+   if text[colonpos+2].isdigit():
+      minute = int(text[colonpos+1: colonpos+3])
+   elif text[colonpos+1].isdigit(): 
+      minute = int(text[colonpos-1])
+
+   if hour is None and minute is None:
+      return (None, None)
+   else:
+      return (int(hour), int(minute))
 
 
 def normalize_duedate(dueday) -> tuple:
