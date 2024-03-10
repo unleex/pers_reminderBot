@@ -29,7 +29,7 @@ async def main() -> None:
     
     dp.include_router(schedule_handlers.rt)
     dp.include_router(edit_days_handlers.rt)
-    dp.include_router(tasks_handlers.rt)#TypeError: object bool can't be used in 'await' expression
+    dp.include_router(tasks_handlers.rt)
     dp.include_router(other_handlers.rt)
 
     dp.update.middleware(middlewares.DataBaseAccessor())
