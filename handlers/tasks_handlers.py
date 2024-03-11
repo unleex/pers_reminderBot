@@ -112,9 +112,12 @@ async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqR
         prealert_datetime = datetime(*hw_data["duedate"],hw_data["duetime"][0]-1, hw_data["duetime"][1])
         on_default_time_datetime = datetime(*hw_data["duedate"],*DEFAULT_DEADLINE_TIME)
         #alert on default_deadline_time, before hour of deadline and on deadline
-        await schedule_deadline_alert(arqredis,clb.from_user.id,hw_data,due_datetime)
-        await schedule_deadline_alert(arqredis,clb.from_user.id,hw_data,prealert_datetime)
-        await schedule_deadline_alert(arqredis,clb.from_user.id,hw_data,on_default_time_datetime)
+        await schedule_deadline_alert(arqredis,clb.from_user.id,
+                                      LEXICON_RU['default_time_alert'],hw_data,due_datetime)
+        await schedule_deadline_alert(arqredis,clb.from_user.id,
+                                      LEXICON_RU['pre_deadline_alert'],hw_data,prealert_datetime)
+        await schedule_deadline_alert(arqredis,clb.from_user.id,
+                                      LEXICON_RU['deadline_alert'],hw_data,on_default_time_datetime)
 
     user_db["homeworks"].update(new_homework)
     edit_user_db(clb.from_user.id, user_db)
