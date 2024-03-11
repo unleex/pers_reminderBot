@@ -7,14 +7,15 @@ logger = logging.getLogger(__name__)
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
 from aiogram import Router, F
-rt = Router()
 from aiogram.fsm.state import default_state
 from states.states import FSMStates
 from aiogram.fsm.context import FSMContext
 
 from keyboards.schedule_days_keyboards import call_schedule_keyboard, editdays_kb_builder,viewdays_kb_builder
-from services.services import format_list, edit_user_db
+from services.services import edit_user_db
 from lexicon.lexicon import LEXICON_RU
+
+rt = Router()
 
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
 editdays = [f'edit{i}' for i in days]
@@ -33,11 +34,12 @@ async def confirm_edit_schedule(clb: CallbackQuery,state: FSMContext,user_db: di
     ctx_data = await state.get_data()
     user_db["schedule"].update(ctx_data)
     edit_user_db(clb.from_user.id, user_db)
-    logger.info(f'Schedule filled by {clb.from_user.id}: {user_db["schedule"]}')
+
     await clb.message.edit_text(
         text='Расписание заполнено!',
         reply_markup=call_schedule_keyboard
     )
+    logger.info(f'Schedule filled by {clb.from_user.id}: {user_db["schedule"]}')
     await state.clear()
 
 

@@ -1,7 +1,6 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-import json
 import logging
 logger = logging.getLogger(__name__)
 
@@ -9,14 +8,13 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram import Router, F
 from aiogram.filters import StateFilter
-rt = Router()
 
 from states.states import FSMStates
 from keyboards.schedule_days_keyboards import editdays_kb_builder,cancel_edit_day_keyboard
-from services.services import edit_user_db
 from lexicon.lexicon import LEXICON_RU
 from filters.filters import IsDayScheduleFormat
 
+rt = Router()
 edit_day_clb = CallbackQuery
 
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
@@ -25,8 +23,9 @@ viewdays = [f'view{i}' for i in days]
 #           edit day
 @rt.callback_query(F.data.in_(editdays),StateFilter(FSMStates.editing_schedule))
 async def edit_day_command(clb: CallbackQuery,state: FSMContext):
-    global edit_day_clb 
+    global edit_day_clb#change to something neat
     edit_day_clb = clb
+
     await clb.message.edit_text(text=LEXICON_RU['edit_days_text'],
                                 reply_markup=cancel_edit_day_keyboard)
     await state.set_data({'day': clb.data[4:]})
@@ -34,7 +33,7 @@ async def edit_day_command(clb: CallbackQuery,state: FSMContext):
 
 
 @rt.message(IsDayScheduleFormat(),StateFilter(FSMStates.editing_day, F.data.in_(editdays)))
-async def edit_day_process(msg: Message, state: FSMContext,user_db: dict):
+async def edit_day_process(msg: Message, state: FSMContext):
     global edit_day_clb 
     ctx_data = await state.get_data()
     output: str = ''

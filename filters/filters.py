@@ -1,6 +1,7 @@
 import re
 from aiogram.types import Message
 from aiogram.filters import BaseFilter
+
 class IsTaskFormat(BaseFilter):
     async def __call__(self, msg: Message):
         text: str = msg.text

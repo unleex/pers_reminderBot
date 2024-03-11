@@ -1,5 +1,4 @@
 from environs import Env
-import os
 from aiogram import Bot, Dispatcher
 
 from aiogram.fsm.storage.redis import RedisStorage, Redis
@@ -23,10 +22,11 @@ async def startup(ctx):
     ctx['bot'] = Bot(token = bot_token)
 
 async def shutdown(ctx):
-    await ctx['bot'].session.close()
+    bot: Bot = ctx['bot']
+    await bot.session.close()
 
 async def alert_deadline(ctx, chat_id, alert_type, subject, task):
-    bot: Bot = ctx['bot']
+    
     text = f'{alert_type}: {subject} - {task}'
     await bot.send_message(chat_id=chat_id, text=text)
 
@@ -39,5 +39,3 @@ class WorkerSettings():
 redis = Redis(host='localhost')
 storage = RedisStorage(redis=redis) 
 dp = Dispatcher(storage=storage)
-
-#os.system('arq config.config.WorkerSettings')

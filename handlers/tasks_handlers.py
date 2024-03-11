@@ -42,7 +42,6 @@ async def tasks_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
     for key in homeworks:
-
         buttons.append(InlineKeyboardButton(text=
                                             f'{homeworks[key]["subject"]} - {homeworks[key]["task"]}',
                                             callback_data=f'view:{key}'))
@@ -122,20 +121,20 @@ async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqR
     user_db["homeworks"].update(new_homework)
     edit_user_db(clb.from_user.id, user_db)
 
-    logger.info(msg=(f'New homework added.\n\t'
-            f'User: {clb.from_user.id}\t'
-            f'Subject: {hw_data["subject"]}\t' 
-            f'Task: {hw_data["task"]}\t'
-            f'Deadline: {due_datetime}'))
+    
     await clb.message.edit_text('Задача добавлена!')
     await state.clear()
-
+    logger.info(msg=(f'New homework added.\n\t'
+        f'User: {clb.from_user.id}\t'
+        f'Subject: {hw_data["subject"]}\t' 
+        f'Task: {hw_data["task"]}\t'
+        f'Deadline: {due_datetime}'))
 
 #cancel adding task
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
-async def cancel_add_task(clb: CallbackQuery,state:FSMContext,user_db: dict):
+async def cancel_add_task(clb: CallbackQuery,state:FSMContext):
 
-    del user_db["homeworks"]["Unconfirmed homework"]
+    state.set_data({})
     await clb.message.edit_text('Изменения отменены.')
     await state.clear()
 
@@ -171,6 +170,7 @@ async def complete_task(clb: CallbackQuery,state: FSMContext,user_db: dict):
 
     del user_db["homeworks"][clb.data[9:]]
     edit_user_db(clb.from_user.id, user_db)
+    
     homeworks = user_db["homeworks"]
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []

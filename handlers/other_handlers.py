@@ -1,21 +1,24 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from aiogram.types import Message,CallbackQuery, Update
+import logging
+logger = logging.getLogger(__name__)
+
+
+from aiogram.types import Message,CallbackQuery
 from aiogram.filters import Command, CommandStart,StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from lexicon.lexicon import LEXICON_RU
 from aiogram import Router, F
 
+from lexicon.lexicon import LEXICON_RU
 from states.states import FSMStates
 from services.services import edit_user_db
 from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
 
 from datetime import datetime
 import json
-import logging
-logger = logging.getLogger(__name__)
+
 rt = Router()
 
 @rt.message(CommandStart())

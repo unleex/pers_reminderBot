@@ -33,12 +33,10 @@ async def main() -> None:
     dp.include_router(other_handlers.rt)
 
     dp.update.middleware(middlewares.DataBaseAccessor())
-    redis_pool = await create_pool(RedisSettings)
     await set_main_menu(bot)
-
-    await bot.delete_webhook(drop_pending_updates=1)
+    await bot.delete_webhook(drop_pending_updates = True)
     await dp.start_polling(bot,
-                           arqredis = redis_pool,
+                           arqredis = await create_pool(RedisSettings),
                            user_db = json.load(open('db/db.json','r'))) 
 
 if __name__ == '__main__':
