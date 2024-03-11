@@ -35,10 +35,10 @@ DEFAULT_DEADLINE_TIME: tuple = (9,00)
 
 
 #tasks
-@rt.callback_query(F.data=='edit_tasks',StateFilter(default_state))
+@rt.callback_query(F.data.in_(('edit_tasks','to_tasks')),StateFilter(default_state))
 async def tasks_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
 
-    homeworks = user_db["homeworks"]
+    homeworks = user_db["homeworks"] 
     kb_builder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
     for key in homeworks:
@@ -50,7 +50,6 @@ async def tasks_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
     await clb.message.answer(text=LEXICON_RU['tasks_menu'],
                              reply_markup=kb_builder.as_markup(resize_keyboard=True))
     await state.set_state(FSMStates.editing_tasks)
-
 #add task
 @rt.message(IsTaskFormat(),StateFilter(default_state,FSMStates.editing_tasks))
 async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
@@ -108,7 +107,11 @@ async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqR
         #add 2000 to year because it decreases to tens(2024->24)
         hw_data["duedate"][0] += 2000
         due_datetime = datetime(*hw_data["duedate"],*hw_data["duetime"])
-        prealert_datetime = datetime(*hw_data["duedate"],hw_data["duetime"][0]-1, hw_data["duetime"][1])
+        
+        prealert_time: list  = [hw_data["duetime"][0]-1, hw_data["duetime"][1]]
+        if prealert_time[0] < 0:
+            prealert_time[0] += 24
+        prealert_datetime = datetime(*hw_data["duedate"],*prealert_time)
         on_default_time_datetime = datetime(*hw_data["duedate"],*DEFAULT_DEADLINE_TIME)
         #alert on default_deadline_time, before hour of deadline and on deadline
         await schedule_deadline_alert(arqredis,clb.from_user.id,

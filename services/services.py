@@ -58,7 +58,7 @@ def get_time_frommsg(text:str) -> tuple[int,int]:
    elif text[colonpos+1].isdigit(): 
       minute = int(text[colonpos-1])
 
-   if hour is None and minute is None:
+   if hour is None or minute is None:
       return (None, None)
    else:
       return (int(hour), int(minute))
