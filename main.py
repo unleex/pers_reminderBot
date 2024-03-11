@@ -17,11 +17,9 @@ from keyboards.set_menu import set_main_menu
 from arq.connections import create_pool, RedisSettings
 
 from handlers import other_handlers,tasks_handlers,schedule_handlers,edit_days_handlers
-import handlers
 from middlewares import middlewares
 
 logger = logging.getLogger(__name__)
-logger.info("AAAND we're online")
 
 
 async def main() -> None:
@@ -35,6 +33,9 @@ async def main() -> None:
     dp.update.middleware(middlewares.DataBaseAccessor())
     await set_main_menu(bot)
     await bot.delete_webhook(drop_pending_updates = True)
+
+    logger.info("AAAND we're online")
+
     await dp.start_polling(bot,
                            arqredis = await create_pool(RedisSettings),
                            user_db = json.load(open('db/db.json','r'))) 

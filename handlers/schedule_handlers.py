@@ -45,7 +45,7 @@ async def confirm_edit_schedule(clb: CallbackQuery,state: FSMContext,user_db: di
 
 @rt.callback_query(F.data=='cancel_edit_schedule',StateFilter(FSMStates.editing_schedule))
 async def cancel_edit_schedule(clb: CallbackQuery, state: FSMContext):
-    state.set_data({})
+    await state.set_data({})
     await clb.message.edit_text(
         text='Изменения отменены.',
         reply_markup=call_schedule_keyboard
@@ -76,4 +76,4 @@ async def view_day_command(clb: CallbackQuery, state: FSMContext,user_db: dict):
         output = f'{clb.data[4:]}: {LEXICON_RU["EmptySchedule"]}'
     await clb.message.edit_text(text=output,
                                 reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True))
-    state.set_state(FSMStates.viewing_day)
+    await state.set_state(FSMStates.viewing_day)

@@ -27,7 +27,6 @@ async def info_start_command(message: Message,state: FSMContext,user_db: dict):
     user_data = message.from_user
     if not str(user_data.id) in json.load(open('db/db.json','r')):
         user_db = {
-                "name": {user_data.full_name},
                 "homeworks": {},
                 "schedule": {'Понедельник': [], 
                               'Вторник': [], 

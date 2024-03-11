@@ -80,7 +80,7 @@ async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
     if due_day:
         due_date = normalize_duedate(due_day)
         day_out = due_day
-        out += f'Записано на {day_out}'
+        out = out.replace('следующий урок', day_out)
 
     homework_id = f'Homework_{msg.from_user.id}_{datetime.today().strftime("%Y/%m/%d_%H:%M:%S")}'
     await state.set_data(
@@ -134,7 +134,7 @@ async def confirm_adding_task(clb: CallbackQuery,state:FSMContext,arqredis: ArqR
 @rt.callback_query(F.data == 'cancel_add_task',StateFilter(FSMStates.adding_task))
 async def cancel_add_task(clb: CallbackQuery,state:FSMContext):
 
-    state.set_data({})
+    await state.set_data({})
     await clb.message.edit_text('Изменения отменены.')
     await state.clear()
 
