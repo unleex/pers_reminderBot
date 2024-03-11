@@ -71,7 +71,7 @@ async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
     subject = text[:text.find("-")].strip().capitalize()
     task = text[text.find("-")+1:].strip().capitalize()
 
-    out += f'{subject}:'
+    out += f'{subject}: '
     out += f'{task}\n'
     out += day_out
 

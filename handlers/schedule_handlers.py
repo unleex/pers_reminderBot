@@ -54,7 +54,7 @@ async def cancel_edit_schedule(clb: CallbackQuery, state: FSMContext):
                                
 
 #   view schedule
-@rt.callback_query(F.data=='view_schedule',StateFilter(default_state))
+@rt.callback_query(F.data == 'view_schedule',StateFilter(default_state))
 async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
     await clb.message.edit_text(text=("Выбери день, расписание которого "
                                       "хочешь посмотреть."),
@@ -64,7 +64,7 @@ async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
 
 
 #       view day
-@rt.callback_query(F.data.in_(viewdays),StateFilter(FSMStates.viewing_schedule))
+@rt.callback_query(F.data.in_(viewdays),StateFilter(FSMStates.viewing_schedule, FSMStates.viewing_day))
 async def view_day_command(clb: CallbackQuery, state: FSMContext,user_db: dict):
     j = 1
     output: str = ''
