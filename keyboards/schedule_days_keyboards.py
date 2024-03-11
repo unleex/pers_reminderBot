@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 #schedule
 butt_edit_schedule = InlineKeyboardButton(
-    text='Изменить/создать расписание',
+    text='Изменить/создать расписание уроков',
     callback_data='edit_schedule'
 )
 butt_edit_tasks = InlineKeyboardButton(
@@ -10,7 +10,7 @@ butt_edit_tasks = InlineKeyboardButton(
     callback_data='edit_tasks'
 )
 butt_view_schedule = InlineKeyboardButton(
-    text='Посмотреть полное расписание',
+    text='Посмотреть расписание уроков',
     callback_data='view_schedule'
 )
 

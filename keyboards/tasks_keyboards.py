@@ -10,7 +10,7 @@ to_menu = InlineKeyboardButton(
    text = '⬅️В меню',
    callback_data='return_to_menu'
 )
-homework_service_butts = [edit,to_menu]
+homework_service_butts = [to_menu]#[edit,to_menu]
 
 confirm = InlineKeyboardButton(
     text='✅Добавить',

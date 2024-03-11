@@ -79,7 +79,7 @@ async def return_to_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
                      reply_markup=call_schedule_keyboard)
     await state.clear()
 #main
-@rt.message(Command(commands='menu'),StateFilter(default_state))
+@rt.message(Command(commands='menu'))
 async def call_menu_command(msg: Message,state: FSMContext,user_db: dict):
     days_en_ru = {'Mon':"Понедельник",
                  'Tue':"Вторник",

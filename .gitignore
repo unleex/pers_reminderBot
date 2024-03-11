@@ -1,5 +1,5 @@
 dump.rdb
-*/__pycache__/
+**/__pycache__
 *.py[cod]
 /bin
 testmain.py 
