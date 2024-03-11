@@ -53,7 +53,7 @@ async def tasks_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
 #add task
 @rt.message(IsTaskFormat(),StateFilter(default_state,FSMStates.editing_tasks))
 async def add_task_command(msg: Message,state: FSMContext,user_db: dict):
-    text = msg.text
+    text = msg.text.lower()
     out = 'Подтвердите ввод:\n'
     day_out='Записано на следующий урок'
 

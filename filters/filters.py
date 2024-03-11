@@ -4,7 +4,7 @@ from aiogram.filters import BaseFilter
 
 class IsTaskFormat(BaseFilter):
     async def __call__(self, msg: Message):
-        text: str = msg.text
+        text: str = msg.text.lower()
         text = text.replace(' ','')
         time = re.findall(r'\d{1,2}:\d{1,2}',text)
         if len(time) > 1:
