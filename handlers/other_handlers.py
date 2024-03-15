@@ -14,7 +14,7 @@ from aiogram import Router, F
 from lexicon.lexicon import LEXICON_RU
 from states.states import FSMStates
 from services.services import edit_user_db
-from keyboards.schedule_days_keyboards import viewdays_kb_builder, call_schedule_keyboard
+from keyboards.schedule_days_keyboards import viewdays_kb_builder, menu_keyboard
 
 from datetime import datetime
 import json
@@ -76,7 +76,7 @@ async def return_to_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
         schedule_text += f'{j}. {i.capitalize()}\n'
         j += 1
     await clb.message.edit_text(text=f"Расписание на сегодня:\n {schedule_text}",
-                     reply_markup=call_schedule_keyboard)
+                     reply_markup=menu_keyboard)
     await state.clear()
 #main
 @rt.message(Command(commands='menu'))
@@ -97,7 +97,7 @@ async def call_menu_command(msg: Message,state: FSMContext,user_db: dict):
         schedule_text += f'{j}. {i.capitalize()}\n'
         j += 1
     await msg.answer(text=f"Расписание на сегодня:\n {schedule_text}",
-                     reply_markup=call_schedule_keyboard)
+                     reply_markup=menu_keyboard)
     await state.clear()
 
 

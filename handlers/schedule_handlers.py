@@ -11,7 +11,7 @@ from aiogram.fsm.state import default_state
 from states.states import FSMStates
 from aiogram.fsm.context import FSMContext
 
-from keyboards.schedule_days_keyboards import call_schedule_keyboard, editdays_kb_builder,viewdays_kb_builder
+from keyboards.schedule_days_keyboards import menu_keyboard, editdays_kb_builder,viewdays_kb_builder
 from services.services import edit_user_db
 from lexicon.lexicon import LEXICON_RU
 
@@ -23,39 +23,14 @@ viewdays = [f'view{i}' for i in days]
 
 
 @rt.callback_query(F.data=='edit_schedule',StateFilter(default_state))
-async def edit_schedule_command(clb: CallbackQuery, state: FSMContext):
+async def edit_schedule(clb: CallbackQuery, state: FSMContext):
     await clb.message.edit_text(text=(LEXICON_RU['edit_schedule_text']),
                                 reply_markup=editdays_kb_builder.as_markup(resize_keyboard=True))
-    await state.set_state(FSMStates.editing_schedule)
-    
-
-@rt.callback_query(F.data == 'confirm_edit_schedule',StateFilter(FSMStates.editing_schedule))
-async def confirm_edit_schedule(clb: CallbackQuery,state: FSMContext,user_db: dict):
-    ctx_data = await state.get_data()
-    user_db["schedule"].update(ctx_data)
-    edit_user_db(clb.from_user.id, user_db)
-
-    await clb.message.edit_text(
-        text='Расписание заполнено!',
-        reply_markup=call_schedule_keyboard
-    )
-    logger.info(f'Schedule filled by {clb.from_user.id}: {user_db["schedule"]}')
-    await state.clear()
-
-
-@rt.callback_query(F.data=='cancel_edit_schedule',StateFilter(FSMStates.editing_schedule))
-async def cancel_edit_schedule(clb: CallbackQuery, state: FSMContext):
-    await state.set_data({})
-    await clb.message.edit_text(
-        text='Изменения отменены.',
-        reply_markup=call_schedule_keyboard
-    )
-    await state.clear()
-                               
+    await state.set_state(FSMStates.editing_schedule)  
 
 #   view schedule
 @rt.callback_query(F.data == 'view_schedule',StateFilter(default_state))
-async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
+async def view_schedule(clb: CallbackQuery,state: FSMContext):
     await clb.message.edit_text(text=("Выбери день, расписание которого "
                                       "хочешь посмотреть."),
                                       reply_markup=viewdays_kb_builder.as_markup(resize_keyboard=True)
@@ -65,7 +40,7 @@ async def view_schedule_command(clb: CallbackQuery,state: FSMContext):
 
 #       view day
 @rt.callback_query(F.data.in_(viewdays),StateFilter(FSMStates.viewing_schedule, FSMStates.viewing_day))
-async def view_day_command(clb: CallbackQuery, state: FSMContext,user_db: dict):
+async def view_day(clb: CallbackQuery, state: FSMContext,user_db: dict):
     j = 1
     output: str = ''
     for i in user_db["schedule"][clb.data[4:]]:

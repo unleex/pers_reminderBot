@@ -26,7 +26,6 @@ async def shutdown(ctx):
     await bot.session.close()
 
 async def alert_deadline(ctx, chat_id, alert_type, subject, task):
-    
     text = f'{alert_type}: {subject} - {task}'
     await bot.send_message(chat_id=chat_id, text=text)
 

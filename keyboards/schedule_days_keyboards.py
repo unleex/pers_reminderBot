@@ -14,7 +14,7 @@ butt_view_schedule = InlineKeyboardButton(
     callback_data='view_schedule'
 )
 
-call_schedule_keyboard = InlineKeyboardMarkup(
+menu_keyboard = InlineKeyboardMarkup(
     inline_keyboard=[[butt_edit_schedule],
                       [butt_edit_tasks],
                       [butt_view_schedule]]
@@ -23,18 +23,14 @@ call_schedule_keyboard = InlineKeyboardMarkup(
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
 editdays = [f'edit{i}' for i in days]
 editdays_butts = [InlineKeyboardButton(
-    text=days[i], 
-    callback_data=editdays[i]) for i in range(7)]
-confirm = InlineKeyboardButton(
-    text='✅Создать',
-    callback_data='confirm_edit_schedule')
-cancel = InlineKeyboardButton(
-    text='❌Отмена',
-    callback_data='cancel_edit_schedule')
+        text=days[i], 
+        callback_data=editdays[i])
+    for i in range(7)]
+to_menu = InlineKeyboardButton(
+    text='⬅️В меню', 
+    callback_data='return_to_menu')
 editdays_kb_builder = InlineKeyboardBuilder()
-editdays_kb_builder.row(*editdays_butts,width=1)
-editdays_kb_builder.row(confirm,cancel,width=1)
-
+editdays_kb_builder.row(*editdays_butts,to_menu,width=1)
 
 #view schedule
 days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье']
