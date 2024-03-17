@@ -58,7 +58,8 @@ async def return_to_viewdays(clb: CallbackQuery):
                                       )
 
 #back to menu
-@rt.callback_query(F.data=='return_to_menu',StateFilter(FSMStates.editing_tasks,FSMStates.viewing_schedule, FSMStates.viewing_day))
+@rt.callback_query(F.data=='return_to_menu',StateFilter(FSMStates.editing_tasks,FSMStates.viewing_schedule, 
+                                                        FSMStates.viewing_day,FSMStates.editing_schedule))
 async def return_to_menu(clb: CallbackQuery,state: FSMContext,user_db: dict):
     days_en_ru = {'Mon':"Понедельник",
                  'Tue':"Вторник",
